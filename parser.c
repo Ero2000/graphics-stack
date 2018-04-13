@@ -115,7 +115,7 @@ void parse_file ( char * filename,
 
       push(stack);
     }
-    else if ( strncmp(line, "box", strlen(line)) == 0 ) {
+    else if ( strncmp(line, "pop", strlen(line)) == 0 ) {
       fgets(line, sizeof(line), f);
 
       pop(stack);
@@ -248,8 +248,8 @@ void parse_file ( char * filename,
 
     else if ( strncmp(line, "apply", strlen(line)) == 0 ) {
       //printf("APPLY\t%s", line);
-      matrix_mult(transform, edges);
-      matrix_mult(transform, polygons);
+      matrix_mult(peek(stack), edges);
+      matrix_mult(peek(stack), polygons);
     }//end apply
 
     else if ( strncmp(line, "display", strlen(line)) == 0 ) {
