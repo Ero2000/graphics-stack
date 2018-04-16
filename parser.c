@@ -94,6 +94,7 @@ void parse_file ( char * filename,
   else
     f = fopen(filename, "r");
 
+  struct stack *stack = new_stack();
   while ( fgets(line, sizeof(line), f) != NULL ) {
     line[strlen(line)-1]='\0';
     //printf(":%s:\n",line);
@@ -108,16 +109,11 @@ void parse_file ( char * filename,
     int type;
     int step = 100;
     int step_3d = 10;
-    struct stack *stack = new_stack();
 
     if ( strncmp(line, "push", strlen(line)) == 0) {
-      fgets(line, sizeof(line), f);
-
       push(stack);
     }
     else if ( strncmp(line, "pop", strlen(line)) == 0 ) {
-      fgets(line, sizeof(line), f);
-
       pop(stack);
     }
     else if ( strncmp(line, "box", strlen(line)) == 0 ) {
@@ -131,7 +127,6 @@ void parse_file ( char * filename,
               xvals[1], yvals[1], zvals[1]);
       matrix_mult(peek(stack), tmp);
       draw_polygons(tmp, s, c);
-      free_matrix(tmp);
     }//end of box
 
     else if ( strncmp(line, "sphere", strlen(line)) == 0 ) {
@@ -143,7 +138,6 @@ void parse_file ( char * filename,
       add_sphere( tmp, xvals[0], yvals[0], zvals[0], r, step_3d);
       matrix_mult(peek(stack), tmp);
       draw_polygons(tmp, s, c);
-      free_matrix(tmp);
     }//end of sphere
 
     else if ( strncmp(line, "torus", strlen(line)) == 0 ) {
@@ -155,7 +149,7 @@ void parse_file ( char * filename,
       add_torus(tmp, xvals[0], yvals[0], zvals[0], r, r1, step_3d);
       matrix_mult(peek(stack), tmp);
       draw_polygons(tmp, s, c);
-      free_matrix(tmp);
+      tmp->lastcol = 0;
     }//end of torus
 
     else if ( strncmp(line, "circle", strlen(line)) == 0 ) {
@@ -218,7 +212,8 @@ void parse_file ( char * filename,
       /* printf("%lf %lf %lf\n", */
       /* 	xvals[0], yvals[0], zvals[0]); */ 
       tmp = make_scale( xvals[0], yvals[0], zvals[0]);
-      matrix_mult(tmp, peek(stack));
+      matrix_mult(peek(stack), tmp);
+      copy_matrix(tmp, peek(stack));
     }//end scale
 
     else if ( strncmp(line, "move", strlen(line)) == 0 ) {
@@ -229,7 +224,8 @@ void parse_file ( char * filename,
       /* printf("%lf %lf %lf\n", */
       /* 	xvals[0], yvals[0], zvals[0]); */ 
       tmp = make_translate( xvals[0], yvals[0], zvals[0]);
-      matrix_mult(tmp, peek(stack));
+      matrix_mult(peek(stack), tmp);
+      copy_matrix(tmp, peek(stack));
     }//end translate
 
     else if ( strncmp(line, "rotate", strlen(line)) == 0 ) {
@@ -247,14 +243,12 @@ void parse_file ( char * filename,
       else
         tmp = make_rotZ( theta );
 
-      matrix_mult(tmp, peek(stack));
+      matrix_mult(peek(stack), tmp);
+      copy_matrix(tmp, peek(stack));
     }//end rotate
 
     else if ( strncmp(line, "display", strlen(line)) == 0 ) {
       //printf("DISPLAY\t%s", line);
-      clear_screen(s);
-      draw_lines(edges, s, c);
-      draw_polygons(polygons, s, c);
       display( s );
     }//end display
 
@@ -262,10 +256,8 @@ void parse_file ( char * filename,
       fgets(line, sizeof(line), f);
       *strchr(line, '\n') = 0;
       //printf("SAVE\t%s\n", line);
-      clear_screen(s);
-      draw_lines(edges, s, c);
-      draw_polygons(polygons, s, c);
       save_extension(s, line);
     }//end save
+    free_matrix(tmp);
   }
 }
