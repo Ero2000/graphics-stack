@@ -51,7 +51,7 @@ void push( struct stack *s ) {
   copy_matrix( s->data[ s->top ], m);
 
   s->top++;
-  s->data[ s->top ] = m;  
+  s->data[ s->top ] = m;
 }
 
 /*======== struct matix *peek() ==========
