@@ -33,5 +33,7 @@ sphere
 sphere
 80 200 0 40
 pop
+rotate
+x 45
 save
 pretzel.png
