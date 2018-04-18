@@ -21,6 +21,7 @@ torus
 0 0 0 50 250
 pop
 pop
+push
 sphere
 0 0 0 25
 sphere
@@ -31,5 +32,6 @@ sphere
 400 400 0 50
 sphere
 80 200 0 40
+pop
 save
 pretzel.png
